@@ -62,4 +62,48 @@ fn update_grid(grid: &mut Vec<Vec<Cell>>) {
         for j in 0..COLS {
             let mut num_live_neighbors = 0;
 
-            // Check the 8 cells surrounding the
+            // Check the 8 cells surrounding the current cell
+            for k in -1..=1 {
+                for l in -1..=1 {
+                    // Skip the current cell
+                    if k == 0 && l == 0 {
+                        continue;
+                    }
+
+                    // Check if the neighboring cell is within the grid boundaries
+                    if i as i64 + k >= 0 && i as i64 + k < ROWS as i64 && j as i64 + l >= 0 && j as i64 + l < COLS as i64 {
+                        if grid[(i as i64 + k) as usize][(j as i64 + l) as usize].is_alive {
+                            num_live_neighbors += 1;
+                        }
+                    }
+                }
+            }
+
+            grid[i][j].num_live_neighbors = num_live_neighbors;
+        }
+    }
+
+    // Next, update the state of each cell based on the number of live neighbors
+    for i in 0..ROWS {
+        for j in 0..COLS {
+            let num_live_neighbors = grid[i][j].num_live_neighbors;
+
+            // A live cell with fewer than 2 live neighbors dies (underpopulation)
+            if grid[i][j].is_alive && num_live_neighbors < 2 {
+                grid[i][j].is_alive = false;
+            }
+            // A live cell with 2 or 3 live neighbors lives on to the next generation
+            else if grid[i][j].is_alive && (num_live_neighbors == 2 || num_live_neighbors == 3) {
+                grid[i][j].is_alive = true;
+            }
+            // A live cell with more than 3 live neighbors dies (overpopulation)
+            else if grid[i][j].is_alive && num_live_neighbors > 3 {
+                grid[i][j].is_alive = false;
+            }
+            // A dead cell with exactly 3 live neighbors becomes a live cell (reproduction)
+            else if !grid[i][j].is_alive && num_live_neighbors == 3 {
+                grid[i][j].is_alive = true;
+            }
+        }
+    }
+}
