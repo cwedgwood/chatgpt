@@ -82,4 +82,28 @@ void updateGrid(vector<vector<Cell>> &grid) {
       grid[i][j].numLiveNeighbors = numLiveNeighbors;
     }
   }
-} // this line was missing
+
+  // Next, update the state of each cell based on the number of live neighbors
+  for (int i = 0; i < ROWS; i++) {
+    for (int j = 0; j < COLS; j++) {
+      int numLiveNeighbors = grid[i][j].numLiveNeighbors;
+
+      // A live cell with fewer than 2 live neighbors dies (underpopulation)
+      if (grid[i][j].isAlive && numLiveNeighbors < 2) {
+        grid[i][j].isAlive = false;
+      }
+      // A live cell with 2 or 3 live neighbors lives on to the next generation
+      else if (grid[i][j].isAlive && (numLiveNeighbors == 2 || numLiveNeighbors == 3)) {
+        grid[i][j].isAlive = true;
+      }
+      // A live cell with more than 3 live neighbors dies (overpopulation)
+      else if (grid[i][j].isAlive && numLiveNeighbors > 3) {
+        grid[i][j].isAlive = false;
+      }
+      // A dead cell with exactly 3 live neighbors becomes a live cell (reproduction)
+      else if (!grid[i][j].isAlive && numLiveNeighbors == 3) {
+        grid[i][j].isAlive = true;
+      }
+    }
+  }
+}
