@@ -1,5 +1,6 @@
 use std::{thread, time};
 use rand::Rng;
+use wasm_bindgen::prelude::*;
 
 const ROWS: usize = 20;
 const COLS: usize = 100;
@@ -11,7 +12,8 @@ struct Cell {
     num_live_neighbors: usize,
 }
 
-fn main() {
+#[wasm_bindgen]
+pub fn main() {
     // Create the grid of cells
     let mut grid = vec![vec![Cell { is_alive: false, num_live_neighbors: 0 }; COLS]; ROWS];
 
